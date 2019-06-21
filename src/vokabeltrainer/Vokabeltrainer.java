@@ -15,6 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.*;
 import java.util.ArrayList;
+import static vokabeltrainer.Vokabeltrainer.alleLektionen;
 import vokabeltrainer.src.gui.GUI;
 
 public class Vokabeltrainer {
@@ -30,8 +31,9 @@ public class Vokabeltrainer {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        try { //hier muss das Programm rein     
-            GUI gui = new GUI();
+        try {  Lektion[] alleLektionen = null;
+//hier muss das Programm rein     
+            GUI gui = new GUI(alleLektionen);
             //erstmal alles Gespeicherte einlesen:
             trainIn = new BufferedReader(new FileReader("Kursliste.csv"));
             listeEinlesen(gui); //liest alle Kurse ein, die lesen ihre Lektion ein und die wiederum ihre Vokabeln
@@ -41,7 +43,7 @@ public class Vokabeltrainer {
             listeSpeichern();
             
             gui.setAlleLektionen(alleLektionen());
-            gui.menuPanel = gui.updateMenuPanel(gui);
+            gui.menuPanel = gui.updateMenuPanel();
             gui.menuPanel.updateUI();            
             
 //            printMenu(gui);
@@ -131,13 +133,13 @@ public class Vokabeltrainer {
 
     //liest Zeile für Zeile die Datei "Kursliste.csv" ein, teilt am ";" und speichert entsprechend Kursnamen und Dateinamen der Lektionsliste in der kursListe ab
     //Problem mit Umlauten und wahrscheinlich auch nicht-lateinischen Schriftsätzen
-    private static void listeEinlesen(GUI pGui) {
+    private static void listeEinlesen(GUI pGUI) {
         try {
             String zeile = trainIn.readLine();
             if (zeile != null) { //wenn Datei nicht leer
                 while (!zeile.equals("endOfList")) { //"endOfList" markiert das Ende der Datei, wird bei listeSpeichern() immer ans Ende gesetzt
                     String[] split = zeile.split(";"); //teilt am ";"
-                    kursListe.add(new Kurs(split[0], split[1], pGui)); //fügt abgespeicherte Kurse wieder zur kursListe hinzu mit den in "split" gespeicherten Informationen
+                    kursListe.add(new Kurs(split[0], split[1], pGUI)); //fügt abgespeicherte Kurse wieder zur kursListe hinzu mit den in "split" gespeicherten Informationen
                     zeile = trainIn.readLine();
                 }
             }

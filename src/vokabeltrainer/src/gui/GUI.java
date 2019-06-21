@@ -58,34 +58,37 @@ public class GUI extends JFrame {
 
     public JPanel kartenPanel;
     public JPanel menuPanel;
-    public JPanel statusPanel;
-    public JPanel southPanel;
-    public JPanel richtungPanel;
+    private JPanel statusPanel;
+    private JPanel southPanel;
+    private JPanel richtungPanel;
     public JLabel vokAbfrage;
-    public Lektion[] alleLektionen;
-    public JButton button0;
-    public JButton button1;
-    public JButton button2;
-    public JButton button3;
-    public JButton button4;
-    public JTextArea eingabefeld;
-    public JButton kreuz;
-    public JButton tick;
-    public JButton hilfssatz;
-    public JLabel statuslabel;
+    private Lektion[] alleLektionen;
+//    private JButton button0;
+//    private JButton button1;
+//    private JButton button2;
+//    private JButton button3;
+//    private JButton button4;
+    private JTextArea eingabefeld;
+    private JButton kreuz;
+    private JButton tick;
+    private JButton hilfssatz;
+    private JLabel statuslabel;
     public Karteikarte aktKarte;
-    public String antwort;
-    public Lektion aktLektion;
-    public int abfrageIndex;
+    private String antwort;
+    private Lektion aktLektion;
+    private int abfrageIndex;
 
     //Konstruktor erstellen
-    public GUI() {
+     public GUI(Lektion[] alleLektionen) {
         //super Konstruktor mit Fenstertitel aufrufen
         super("Digitaler Vokabeltrainer");
+        this.alleLektionen = alleLektionen;
+
         //Größe und weitere Details zum JFrame angeben 
         setSize(1000, 500);
         setLayout(new BorderLayout()); //Layout muss festgelegt werden
         add(menuPanel = createMenuPanel(), BorderLayout.WEST); //sorgt dafür, dass das Panel auch dem Frame zugefügt wird
+        updateMenuPanel();
         add(kartenPanel = createKartenPanel(), BorderLayout.CENTER);
         add(statusPanel = createStatusPanel(), BorderLayout.NORTH);
         add(southPanel = createSouthPanel(this), BorderLayout.SOUTH);
@@ -105,146 +108,134 @@ public class GUI extends JFrame {
 //        //Farbe festlegen
         menupanel.setBackground(new java.awt.Color(0, 145, 153));
 
-        button0 = new JButton();
-        button0.setFont(new Font("Dialog", 0, 20));
+//        button0 = new JButton();
+//        button0.setFont(new Font("Dialog", 0, 20));
+//
+//        button1 = new JButton();
+//        button1.setFont(new Font("Dialog", 0, 20));
+//
+//        button2 = new JButton();
+//        button2.setFont(new Font("Dialog", 0, 20));
+//
+//        button3 = new JButton();
+//        button3.setFont(new Font("Dialog", 0, 20));
+//
+//        button4 = new JButton();
+//        button4.setFont(new Font("Dialog", 0, 20));
 
-        button1 = new JButton();
-        button1.setFont(new Font("Dialog", 0, 20));
-
-        button2 = new JButton();
-        button2.setFont(new Font("Dialog", 0, 20));
-
-        button3 = new JButton();
-        button3.setFont(new Font("Dialog", 0, 20));
-
-        button4 = new JButton();
-        button4.setFont(new Font("Dialog", 0, 20));
-
-        //Die Buttons dem Panel hinzufügen
-        menupanel.add(button0);
-        menupanel.add(button1);
-        menupanel.add(button2);
-        menupanel.add(button3);
-        menupanel.add(button4);
+//        //Die Buttons dem Panel hinzufügen
+//        menupanel.add(button0);
+//        menupanel.add(button1);
+//        menupanel.add(button2);
+//        menupanel.add(button3);
+//        menupanel.add(button4);
+        updateMenuPanel();
         return menupanel;
     }
 
     //hier werden die leeren Buttons dann entfernt und durch die neuen mit richitger Aufschrift ersetzt
-    public JPanel updateMenuPanel(GUI pGui) {
+    public JPanel updateMenuPanel() {
 
-//        JPanel menupanel = new JPanel();
-//          //Layout festlegen
-//        menupanel.setLayout(new BoxLayout(menupanel, BoxLayout.Y_AXIS));
-//          //Farbe festlegen
-//        menupanel.setBackground(new java.awt.Color(0, 145, 153));
-//            /*  Die Button-Struktur mal ersetzt durch JComboBoxen. Dort kann man dann aus auklappender Liste auswählen. Aktuell sind die Arrays hier noch händisch eingegeben, 
-//                aber Ziel ist es, dass hier die Lektionsnamen geladen werden und in einer Schleife entstprechend bestimmen, wann eine ComboBox mit Kurs erstellt wird
-//                allerdings müsste, wollte man den Kursnamen mit anzeigen jeweils ein Panel über die CB gelegt werden mit dem entsprechenden Label...
-//                Was ist nun besser? Das mit den Buttons?
-//                Noch eine Alternative wäre es vielleicht mit einem FileChooser zu arbeiten, wo dann die Lektionsliste ausgewählt wird, die direkt geladen wird? (vgl. https://www.java-tutorial.org/jfilechooser.html)*/
-//        // Array für JComboBox
-//        String comboBoxListeEng[] = {"Science and Technology", "Shopping",
-//            "Sustainability", "History of GB", "Thomas Tallis School",
-//            "A day in the city", "Slavery in the US", "Colonism",
-//            "Democracy and Politics"};
-//        String comboBoxListeSpa[] = {"En la tienda", "El mar",
-//            "Las fiestas", "Cristobál Cólon"};
-//        String comboBoxListeFr[] = {"Zahlen bis 20", "Zahlen ab 20"};
-//        
-//        //JComboBox mit den Einträgen erstellen
-//        JComboBox lektionsauswahlEng = new JComboBox(comboBoxListeEng);
-//        JComboBox lektionsauswahlSpa = new JComboBox (comboBoxListeSpa);
-//        JComboBox lektionsauswahlFr = new JComboBox (comboBoxListeFr);
-//        
-//        //JComboBox wird Panel hinzugefügt
-//        menupanel.add(lektionsauswahlEng);
-//        menupanel.add(lektionsauswahlSpa);
-//        menupanel.add(lektionsauswahlFr);
         //Buttons erstellen
-        menuPanel.remove(button0);
-        menuPanel.remove(button1);
-        menuPanel.remove(button2);
-        menuPanel.remove(button3);
-        menuPanel.remove(button4);
+        
+        menuPanel.removeAll();
+        
+        for (int i = 0; i < alleLektionen.length; ++i) {
+    // die Variable muss hier final sein, damit sie im ActionListener verwendet werden kann
+    final Lektion lekt = alleLektionen[i];
+    JButton but = new JButton(lekt.getMeinKurs() + " - " + lekt.getName());
+    but.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // if-Abfrage wird nicht benötigt, denn wenn es die Lektion nicht mehr gibt, sollte auch der Button weg sein!
+            aktLektion = lekt;
+            abfrageIndex = 0;
+            lekt.abfrageZ(GUI.this, 0);
+            eingabefeld.setText("");
+        }
+    });
+    but.setFont(new Font("Dialog", 0, 20));
+    menuPanel.add(but);
+}
 
-        //hier jeweils im ActionListener die Lektion zuweisen, die in lekAuflisten() an entsprechender Stelle steht
-        Lektion lektion0 = alleLektionen[0];
-        button0 = new JButton(lektion0.getMeinKurs() + " - " + lektion0.getName());
-        button0.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (alleLektionen[0] != null) {
-                    aktLektion = alleLektionen[0];
-                    abfrageIndex = 0;
-                    alleLektionen[0].abfrageZ(pGui, 0);
-                    eingabefeld.setText("");
-                }
-            }
-        });
-        button0.setFont(new Font("Dialog", 0, 20));
-
-        button1 = new JButton(alleLektionen[1].getMeinKurs() + " - " + alleLektionen[1].getName());
-        button1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (alleLektionen[1] != null) {
-                    aktLektion = alleLektionen[1];
-                    abfrageIndex = 0;
-                    alleLektionen[1].abfrageZ(pGui, 0);
-                    eingabefeld.setText("");
-                }
-            }
-        });
-        button1.setFont(new Font("Dialog", 0, 20));
-
-        button2 = new JButton(alleLektionen[2].getMeinKurs() + " - " + alleLektionen[2].getName());
-        button2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (alleLektionen[2] != null) {
-                    aktLektion = alleLektionen[2];
-                    abfrageIndex = 0;
-                    alleLektionen[2].abfrageZ(pGui, 0);
-                    eingabefeld.setText("");
-                }
-            }
-        });
-        button2.setFont(new Font("Dialog", 0, 20));
-
-        button3 = new JButton(alleLektionen[3].getMeinKurs() + " - " + alleLektionen[3].getName());
-        button3.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (alleLektionen[3] != null) {
-                    aktLektion = alleLektionen[3];
-                    abfrageIndex = 0;
-                    alleLektionen[3].abfrageZ(pGui, 0);
-                    eingabefeld.setText("");
-                }
-            }
-        });
-        button3.setFont(new Font("Dialog", 0, 20));
-
-        button4 = new JButton(alleLektionen[4].getMeinKurs() + " - " + alleLektionen[4].getName());
-        button4.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (alleLektionen[4] != null) {
-                    aktLektion = alleLektionen[4];
-                    abfrageIndex = 0;
-                    alleLektionen[4].abfrageZ(pGui, 0);
-                    eingabefeld.setText("");
-                }
-            }
-        });
-        button4.setFont(new Font("Dialog", 0, 20));
-
-        //Die Buttons dem Panel hinzufügen
-        menuPanel.add(button0);
-        menuPanel.add(button1);
-        menuPanel.add(button2);
-        menuPanel.add(button3);
-        menuPanel.add(button4);
+//        //hier jeweils im ActionListener die Lektion zuweisen, die in lekAuflisten() an entsprechender Stelle steht
+//        Lektion lektion0 = alleLektionen[0];
+//        button0 = new JButton(lektion0.getMeinKurs() + " - " + lektion0.getName());
+//        button0.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                if (alleLektionen[0] != null) {
+//                    aktLektion = alleLektionen[0];
+//                    abfrageIndex = 0;
+//                    alleLektionen[0].abfrageZ(pGui, 0);
+//                    eingabefeld.setText("");
+//                }
+//            }
+//        });
+//        button0.setFont(new Font("Dialog", 0, 20));
+//
+//        button1 = new JButton(alleLektionen[1].getMeinKurs() + " - " + alleLektionen[1].getName());
+//        button1.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                if (alleLektionen[1] != null) {
+//                    aktLektion = alleLektionen[1];
+//                    abfrageIndex = 0;
+//                    alleLektionen[1].abfrageZ(pGui, 0);
+//                    eingabefeld.setText("");
+//                }
+//            }
+//        });
+//        button1.setFont(new Font("Dialog", 0, 20));
+//
+//        button2 = new JButton(alleLektionen[2].getMeinKurs() + " - " + alleLektionen[2].getName());
+//        button2.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                if (alleLektionen[2] != null) {
+//                    aktLektion = alleLektionen[2];
+//                    abfrageIndex = 0;
+//                    alleLektionen[2].abfrageZ(pGui, 0);
+//                    eingabefeld.setText("");
+//                }
+//            }
+//        });
+//        button2.setFont(new Font("Dialog", 0, 20));
+//
+//        button3 = new JButton(alleLektionen[3].getMeinKurs() + " - " + alleLektionen[3].getName());
+//        button3.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                if (alleLektionen[3] != null) {
+//                    aktLektion = alleLektionen[3];
+//                    abfrageIndex = 0;
+//                    alleLektionen[3].abfrageZ(pGui, 0);
+//                    eingabefeld.setText("");
+//                }
+//            }
+//        });
+//        button3.setFont(new Font("Dialog", 0, 20));
+//
+//        button4 = new JButton(alleLektionen[4].getMeinKurs() + " - " + alleLektionen[4].getName());
+//        button4.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                if (alleLektionen[4] != null) {
+//                    aktLektion = alleLektionen[4];
+//                    abfrageIndex = 0;
+//                    alleLektionen[4].abfrageZ(pGui, 0);
+//                    eingabefeld.setText("");
+//                }
+//            }
+//        });
+//        button4.setFont(new Font("Dialog", 0, 20));
+//
+//        //Die Buttons dem Panel hinzufügen
+//        menuPanel.add(button0);
+//        menuPanel.add(button1);
+//        menuPanel.add(button2);
+//        menuPanel.add(button3);
+//        menuPanel.add(button4);
         return menuPanel;
     }
 
@@ -348,25 +339,6 @@ public class GUI extends JFrame {
         statuslabel = new JLabel();
         ImageIcon statusausgeschaltet = new ImageIcon(new ImageIcon("./Lampe_ausgeschaltet.png").getImage().getScaledInstance(40, 40, Image.SCALE_DEFAULT));
         statuslabel.setIcon(statusausgeschaltet);
-
-//        JLabel statuslabelrot = new JLabel();
-//        ImageIcon statusrot = new ImageIcon(new ImageIcon("./Lampe_rot.png").getImage().getScaledInstance(40, 40, Image.SCALE_DEFAULT));
-//        statuslabelrot.setIcon(statusrot);
-//
-//        JLabel statuslabelgelb = new JLabel();
-//        ImageIcon statusgelb = new ImageIcon(new ImageIcon("./Lampe_gelb.png").getImage().getScaledInstance(40, 40, Image.SCALE_DEFAULT));
-//        statuslabelgelb.setIcon(statusgelb);
-//
-//        JLabel statuslabelgruen = new JLabel();
-//        ImageIcon statusgruen = new ImageIcon(new ImageIcon("./Lampe_gruen.png").getImage().getScaledInstance(40, 40, Image.SCALE_DEFAULT));
-//        statuslabelgruen.setIcon(statusgruen);
-//
-//        JLabel statLabAus = new JLabel();
-//        ImageIcon statusausgeschaltet = new ImageIcon(new ImageIcon("./Lampe_ausgeschaltet.png").getImage().getScaledInstance(40, 40, Image.SCALE_DEFAULT));
-//        statLabAus.setIcon(statusausgeschaltet);
-//        statuspanel.add(statuslabelrot);
-//        statuspanel.add(statuslabelgelb);
-//        statuspanel.add(statuslabelgruen);
         statuspanel.add(statuslabel);
         return statuspanel;
     }
