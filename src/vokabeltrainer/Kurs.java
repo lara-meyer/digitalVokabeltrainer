@@ -86,7 +86,7 @@ public class Kurs {
             //Writer hier, damit bei jedem Speichern ein neuer Stream geöffnet wird; gibt sonst Probleme mit dem close()
             kursOut = new BufferedWriter(new FileWriter(kursFile));
             for (Lektion lek : lekListe) {
-                kursOut.write(lek.getName() + ";" + lek.getScore() + ";" + lek.getVollGelernt() + ";" + lek.getZielsprGefr() + ";" + lek.getMeinKurs() + ";" + "Vokabellisten\\" + lek.getMeinKurs() + "_" + lek.getName() + ".csv" + ";");
+                kursOut.write(lek.getName() + ";" + lek.getVollGelernt() + ";" + lek.getMeinKurs() + ";" + "Vokabellisten\\" + lek.getMeinKurs() + "_" + lek.getName() + ".csv" + ";");
                 kursOut.newLine();
             }
             kursOut.write("endOfList");
@@ -107,13 +107,11 @@ public class Kurs {
 
                     //Parameter typecasten zu dem, was sie im Konstruktor sein müssen:
                     String pName = split[0];
-                    int pScore = Integer.parseInt(split[1]);
-                    boolean pVollGel = Boolean.parseBoolean(split[2]);
-                    boolean pZielsprGefr = Boolean.parseBoolean(split[3]);
-                    String pMeinKurs = split[4];
-                    String pFile = split[5];
+                    boolean pVollGel = Boolean.parseBoolean(split[1]);
+                    String pMeinKurs = split[2];
+                    String pFile = split[3];
 
-                    lekListe.add(new Lektion(pName, pScore, pVollGel, pZielsprGefr, pMeinKurs, pFile, gui));//fügt abgespeicherte Kurse wieder zur kursListe hinzu mit den in "split" gespeicherten Informationen
+                    lekListe.add(new Lektion(pName, pVollGel, pMeinKurs, pFile, gui));//fügt abgespeicherte Kurse wieder zur kursListe hinzu mit den in "split" gespeicherten Informationen
                     zeile = kursIn.readLine();
                 }
             }
@@ -151,7 +149,7 @@ public class Kurs {
         return kursFile;
     }
     
-    public int getAnzahlLek(){
+    public int getAnzahlLek(){//kann glaub ich raus
         return lekListe.size();
     }
 

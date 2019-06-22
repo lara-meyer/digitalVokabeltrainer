@@ -15,7 +15,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.*;
 import java.util.ArrayList;
-import static vokabeltrainer.Vokabeltrainer.alleLektionen;
 import vokabeltrainer.src.gui.GUI;
 
 public class Vokabeltrainer {
@@ -31,9 +30,8 @@ public class Vokabeltrainer {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        try {  Lektion[] alleLektionen = null;
-//hier muss das Programm rein     
-            GUI gui = new GUI(alleLektionen);
+        try { //hier muss das Programm rein     
+            GUI gui = new GUI();
             //erstmal alles Gespeicherte einlesen:
             trainIn = new BufferedReader(new FileReader("Kursliste.csv"));
             listeEinlesen(gui); //liest alle Kurse ein, die lesen ihre Lektion ein und die wiederum ihre Vokabeln
@@ -42,11 +40,9 @@ public class Vokabeltrainer {
             trainOut = new BufferedWriter(new FileWriter("Kursliste.csv"));
             listeSpeichern();
             
-            gui.setAlleLektionen(alleLektionen());
-            gui.menuPanel = gui.updateMenuPanel();
+            gui.menuPanel = gui.updateMenuPanel(gui, alleLektionen());
             gui.menuPanel.updateUI();            
             
-//            printMenu(gui);
         } catch (IOException e) { //hier fangen wir Fehler auf, die ganz zum Schluss noch übrig sind und sonst nirgendwo behandelt werden
             System.out.println("Upsi. Irgendwo ist ein Input/Output schief gelaufen, aber ich weiß nicht genau wo. Sorry... ");
             //System.out.println(e.getMessage());
@@ -133,13 +129,13 @@ public class Vokabeltrainer {
 
     //liest Zeile für Zeile die Datei "Kursliste.csv" ein, teilt am ";" und speichert entsprechend Kursnamen und Dateinamen der Lektionsliste in der kursListe ab
     //Problem mit Umlauten und wahrscheinlich auch nicht-lateinischen Schriftsätzen
-    private static void listeEinlesen(GUI pGUI) {
+    private static void listeEinlesen(GUI pGui) {
         try {
             String zeile = trainIn.readLine();
             if (zeile != null) { //wenn Datei nicht leer
                 while (!zeile.equals("endOfList")) { //"endOfList" markiert das Ende der Datei, wird bei listeSpeichern() immer ans Ende gesetzt
                     String[] split = zeile.split(";"); //teilt am ";"
-                    kursListe.add(new Kurs(split[0], split[1], pGUI)); //fügt abgespeicherte Kurse wieder zur kursListe hinzu mit den in "split" gespeicherten Informationen
+                    kursListe.add(new Kurs(split[0], split[1], pGui)); //fügt abgespeicherte Kurse wieder zur kursListe hinzu mit den in "split" gespeicherten Informationen
                     zeile = trainIn.readLine();
                 }
             }
@@ -159,19 +155,13 @@ public class Vokabeltrainer {
 //        return aufgelisteteLek;
 //    }
     
-    public static Lektion[] alleLektionen(){        
-        int anzahlLek = 0;
-        for (Kurs kurs : kursListe) {
-            anzahlLek = anzahlLek + kurs.getAnzahlLek();
-        }
-        Lektion[] alleLek = new Lektion[anzahlLek];
-        int index = 0;
-        for (Kurs kurs : kursListe) {
+    public static ArrayList<Lektion> alleLektionen(){        
+        ArrayList<Lektion> alleLek = new ArrayList<>();
+        kursListe.forEach((kurs) -> {
             for (int i = 0; i < kurs.getAnzahlLek(); i++) {
-                alleLek[index] = kurs.getLektionAt(i);
-                index++;
+                alleLek.add(kurs.getLektionAt(i));
             }
-        }
+        });
         return alleLek;
     }
 

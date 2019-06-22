@@ -27,8 +27,6 @@ public class Lektion { //Problem: Lektionen verschiedener Sprachen dürfen nicht
 
     private final String lName;
     private boolean vollGelernt;
-    private int score; //score gibt an, wie viele Vokabeln bereits "gelernt" sind, also auf der grünen Lampe stehen
-    private boolean zielsprGefr; //zielsprGefr == true bedeutet, dass der Nutzer die Vokabelbedeutung in der Zielsprache eingeben muss
     private Karteikarte aktKarte;
     private ArrayList<Karteikarte> vokListe = new ArrayList<>();
     private File lektFile;
@@ -47,9 +45,6 @@ public class Lektion { //Problem: Lektionen verschiedener Sprachen dürfen nicht
         lName = pName;
         meinKurs = pMeinKurs;
         gui = pGui;
-
-        //bei einer neuen Lektion soll als default-case nach der Zielsprache gefragt werden, wenn der Nutzer es umstellt, soll es dann aber gespeichert werden
-        zielsprGefr = true;
 
         //erstellt im Ordner "Vokabellisten" eine csv-Datei, die nach dem Lektionsnamen benannt wird und in der die Inhalte aller Karteikarten gespeichert werden 
         //sollen, die zu dieser Lektion gehören 
@@ -74,12 +69,10 @@ public class Lektion { //Problem: Lektionen verschiedener Sprachen dürfen nicht
         }
     }
 
-    public Lektion(String pName, int pScore, boolean pVollGel, boolean pZielsprGefr, String pMeinKurs, String pFile, GUI pGui) { //Konstruktor für wenn die gespeicherten Lektionen eingelesen werden
+    public Lektion(String pName, boolean pVollGel, String pMeinKurs, String pFile, GUI pGui) { //Konstruktor für wenn die gespeicherten Lektionen eingelesen werden
         gui = pGui;
         lName = pName;
-        score = pScore;
         vollGelernt = pVollGel;
-        zielsprGefr = pZielsprGefr;
         meinKurs = pMeinKurs;
         lektFile = new File(pFile);
         try {
@@ -143,24 +136,20 @@ public class Lektion { //Problem: Lektionen verschiedener Sprachen dürfen nicht
         }
     }
 
-    public void abfrageZ(GUI pGui, int pIndex) { //fragt so, dass der Nutzer die Zielsprache eingeben muss, entspr. "zielsprGefr"
+    public void abfrage(GUI pGui, int pIndex) { //fragt je nach Wert von fZielsprGefr ab, bei true muss Nutzer Zielsprache eingeben, bei false Ausgangssprache
         aktKarte = vokListe.get(pIndex);
         pGui.aktKarte = aktKarte;
-        pGui.vokAbfrage = pGui.setAbfrage(aktKarte.getVokA());
-        pGui.kartenPanel.updateUI();
-        pGui.updateStatusPanel(aktKarte.getStatus());
-
-//        vokListe.forEach((karte) -> {
-//            aktKarte = karte;
-//            pGui.aktKarte = aktKarte;
-//            pGui.vokAbfrage = pGui.setAbfrage(aktKarte.getVokA());
-//            pGui.kartenPanel.updateUI();
-//            pGui.updateStatusPanel(aktKarte.getStatus());
-//        });
-    }
-
-    public void abfrageA() {//fragt so, dass der Nutzer die Ausgangssprache eingeben muss
-        System.out.println("Ich möchte die Ausgangssprache wissen.");
+        if (aktKarte.getGelernt() == false) {//wenn die Lampe noch nicht grün ist, wird abgefragt
+            if (pGui.fZielsprGefr == true) {
+                pGui.setAbfrage(aktKarte.getVokA());
+            } else {
+                pGui.setAbfrage(aktKarte.getVokZ());
+            }
+            pGui.kartenPanel.updateUI();
+            pGui.updateStatusPanel(aktKarte.getStatus());
+        }else{//wenn Lampe schon grün, wird die nächste Karteikarte der Liste aufgerufen
+            abfrage(pGui, (pIndex+1));
+        }
     }
 
     public Karteikarte getVokAt(int pIndex) {
@@ -183,22 +172,6 @@ public class Lektion { //Problem: Lektionen verschiedener Sprachen dürfen nicht
         return vollGelernt;
     }
 
-    public void setScore(int pScore) {
-        score = pScore;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setZielsprGefr(boolean pZgefragt) {
-        zielsprGefr = pZgefragt;
-    }
-
-    public boolean getZielsprGefr() {
-        return zielsprGefr;
-    }
-
     public void setAktKarte(Karteikarte pAktuell) {
         aktKarte = pAktuell;
     }
@@ -218,10 +191,20 @@ public class Lektion { //Problem: Lektionen verschiedener Sprachen dürfen nicht
     public void setAntwort(String pAntwort) {
         antwort = pAntwort;
     }
-    
-    public int getAnzahlLek(){
+
+    public int getAnzahlVok() {
         int anzahl = vokListe.size();
         return anzahl;
+    }
+    
+    public int getAnzahlGel(){ //geht vokListe durch und zählt dabei, bei wievielen der Karteikarten das Attribut gelernt true ist
+        int anzahlGel=0;
+        for (Karteikarte karte : vokListe) {
+            if(karte.getGelernt()==true){
+                anzahlGel++;
+            }
+        }
+        return anzahlGel;
     }
 
 }

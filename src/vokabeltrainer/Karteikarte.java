@@ -78,17 +78,16 @@ public class Karteikarte {
         return hilfssatz;
     }
 
-    public void setStatus(int pWert) {
+    public void setStatus(int pWert) {//übernimmt zusätzlich Funktion von setGelernt, wenn erforderlich, daher keine extra setGelernt()
         status = pWert;
+        if(pWert == 3){
+            gelernt = true;
+        }
         meineLektion.listeSpeichern(); //damit Status der Lampe beim nächsten Programmstart wieder übernommen wird
     }
 
     public int getStatus() {
         return status;
-    }
-
-    public void setGelernt() {
-        gelernt = true;
     }
 
     public boolean getGelernt() {
@@ -97,6 +96,7 @@ public class Karteikarte {
 
     public void setFavorit(boolean pFavorit) {
         favorit = pFavorit;
+        meineLektion.listeSpeichern();
     }
 
     public boolean getFavorit() {
