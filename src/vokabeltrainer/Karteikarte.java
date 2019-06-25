@@ -20,16 +20,19 @@ public class Karteikarte {
     private Lektion meineLektion;
 
 
-    public Karteikarte(Lektion pMeineLektion) {
-        setVokA();
-        setVokZ();
-        menuHS();        
+    public Karteikarte(Lektion pMeineLektion, String pVokA, String pVokZ, String pHS) { //Konstruktor für wenn neue Karteiakarten erstellt werden
+        vokA = pVokA;
+        vokZ = pVokZ;
+        hilfssatz = pHS; 
+        meineLektion = pMeineLektion;
+        
+        //sind eigentlich Standardwerte, aber zur Sicherheit:
         gelernt = false;
         status = 0;
         favorit = false;
-        meineLektion = pMeineLektion;
     }
     
+    //Konstruktor für wenn Vokabeln eingelesen werden
     public Karteikarte(String pVokA, String pVokZ, String pHS, boolean pGel, int pStatus, boolean pFav, Lektion pMeineLektion){
         vokA = pVokA;
         vokZ = pVokZ;
@@ -39,39 +42,13 @@ public class Karteikarte {
         favorit = pFav;
         meineLektion = pMeineLektion;
     }
-    
-    private void setVokA(){
-        System.out.println("Vokabel Ausgangssprache?");
-        String pVokA = SystemInReader.readString();
-        this.vokA = pVokA;
-    }
 
     public String getVokA() {
         return vokA;
     }
-    
-    private void setVokZ(){
-        System.out.println("Vokabel Zielsprache?");
-        String pVokZ = SystemInReader.readString();
-        vokZ = pVokZ;
-    }
 
     public String getVokZ() {
         return vokZ;
-    }
-    
-    private void menuHS() {
-        System.out.println("Hilfssatz hinzufügen?");
-        System.out.println("1: ja");
-        System.out.println("2: nein");
-        int eingHS = SystemInReader.readInt();
-        if (eingHS == 1) {
-            System.out.println("Hilfssatz?");
-            String pHS = SystemInReader.readString();
-            this.hilfssatz = pHS;
-        }else if (eingHS == 2){
-            this.hilfssatz = "Es wurde kein Hilfssatz eingegeben.";
-        }
     }
 
     public String getHilfssatz() {
